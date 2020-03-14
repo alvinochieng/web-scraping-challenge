@@ -69,9 +69,9 @@ def scrape():
         scrape_table = pd.DataFrame(df_data, columns=['Description', 'Value'])    
     
         scrape_table.reset_index()
-        scrape_table.set_index('Description')
+        new_scraped = scrape_table.set_index('Description')
         
-        new_scraped = scrape_table.to_html(index=True)
+        final_table = new_scraped.to_html(index=True)
         
         url = 'https://www.jpl.nasa.gov/spaceimages'
         browser.visit(url)
@@ -120,10 +120,9 @@ def scrape():
         "headline": news_title,
         "paragraph": news_p,
         "weather": mars_weather_tweet,
-        "facts": new_scraped,
+        "facts": final_table,
         "image": featured_image_url,
-        "hemispheres": hemisphere_image_urls,
-        "images_hem": hem_url
+        "hemispheres": hemisphere_image_urls
     }    
         
     browser.quit()
