@@ -35,7 +35,6 @@ def scrape():
     soup = BeautifulSoup(response.text, "html.parser")    
     
     tweets = soup.find_all('div', class_='js-tweet-text-container')
-    #twitter = soup.find('p').get_text()
      
     for data in tweets:
         twitter = data.find('p').text
@@ -48,10 +47,54 @@ def scrape():
     
     mars_weather_tweet.append(twitter)
     
+    url = 'https://space-facts.com/mars'
+    browser.visit(url)
+    response = requests.get(url)
+    
+    time.sleep(2)
+    
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    mars_facts = soup.find('table')
+    
+    table_rows = mars_facts.find_all('tr')
+    
+    df_data = []
+    for tr in table_rows:
+        td = tr.find_all('td')
+        row = [tr.text for tr in td]
+        df_data.append(row)
+        scrape_table = pd.DataFrame(df_data, columns=['Description', 'Value'])    
+    
+        scrape_table.reset_index()
+        scrape_table.set_index('Description')
+        
+        new_scraped = scrape_table.to_html(index=True)
+        
+        url = 'https://www.jpl.nasa.gov/spaceimages'
+        browser.visit(url)
+        html = browser.html
+        
+        time.sleep(2)
+        
+        soup = BeautifulSoup(html, 'html.parser')
+        
+        main_page = 'https://www.jpl.nasa.gov'
+        
+        relative_path = soup.find('div', class_='carousel_items')('article')[0]['style']
+        
+        get_image_url = relative_path.split("'")
+        unclean_image_url = get_image_url[1]
+        symbol_removed = unclean_image_url.replace(');', '')
+        featured_image_url = main_page + symbol_removed
+        
+        
     mars_data = {
         "headline": news_title,
         "paragraph": news_p,
-        "weather": mars_weather_tweet
+        "weather": mars_weather_tweet,
+        "facts": new_scraped,
+        "image": featured_image_url
     }    
         
     browser.quit()
