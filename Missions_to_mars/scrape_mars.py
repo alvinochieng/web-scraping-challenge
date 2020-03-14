@@ -41,11 +41,13 @@ def scrape():
         
         if 'sol' and 'pressure' in twitter:
             mars_weather = twitter
+            new_twitter = twitter.split('pic')
+            cleaned_tweet = new_twitter[0].replace('\n', '')            
             break
         else:
             pass
     
-    mars_weather_tweet.append(twitter)
+    mars_weather_tweet.append(cleaned_tweet)
     
     url = 'https://space-facts.com/mars'
     browser.visit(url)
@@ -97,6 +99,7 @@ def scrape():
         soup = BeautifulSoup(html, 'html.parser')
         
         hemisphere_image_urls = []
+        hem_url = []
         main_url = 'https://astrogeology.usgs.gov'
         links = soup.find_all('div', class_='item')
         
@@ -111,6 +114,7 @@ def scrape():
             img_wd = soup.find('div', class_='downloads')
             img_link = img_wd.find('a')['href']
             hemisphere_image_urls.append({'title':title, 'image_url':img_link})
+            hem_url.append(img_link)
             
     mars_data = {
         "headline": news_title,
@@ -118,7 +122,8 @@ def scrape():
         "weather": mars_weather_tweet,
         "facts": new_scraped,
         "image": featured_image_url,
-        "hemispheres": hemisphere_image_urls
+        "hemispheres": hemisphere_image_urls,
+        "images_hem": hem_url
     }    
         
     browser.quit()
