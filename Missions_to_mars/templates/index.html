@@ -20,7 +20,6 @@
 </div>
 
 <div class="container">
-  <div class="box">
   <div class="row">
     <div class="col">
 
@@ -54,13 +53,30 @@
 </div>
 </div>
 
-</div>
+
 
 <h3>Mars Hemispheres</h3>
-<img src="{{mars_news.images_hem}}" alt="hemispheres"/>
+
+{% for hemisphere in mars_news.hemispheres%}
+
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <img src="{{hemisphere.image_url}}" class="card-img-top" alt="hemispheres" height="300" width="300"/>
+    <div class="card-body">
+      <h5 class="card-title">{{hemisphere.title}}</h5>
 
 </div>
 </div>
+
+</div>
+{% endfor %}
+</div>
+
+</div>
+
+</div>
+
 
 </body>
 
