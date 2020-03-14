@@ -88,13 +88,37 @@ def scrape():
         symbol_removed = unclean_image_url.replace(');', '')
         featured_image_url = main_page + symbol_removed
         
+        url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+        browser.visit(url)
         
+        time.sleep(2)
+        
+        html = browser.html
+        soup = BeautifulSoup(html, 'html.parser')
+        
+        hemisphere_image_urls = []
+        main_url = 'https://astrogeology.usgs.gov'
+        links = soup.find_all('div', class_='item')
+        
+        for link in links:
+            img_url = link.find('a', class_='itemLink product-item')['href']
+            title = link.find('h3').text
+            final_url = main_url + img_url
+            browser.visit(final_url)
+            
+            html = browser.html
+            soup = BeautifulSoup(html, 'html.parser')
+            img_wd = soup.find('div', class_='downloads')
+            img_link = img_wd.find('a')['href']
+            hemisphere_image_urls.append({'title':title, 'image_url':img_link})
+            
     mars_data = {
         "headline": news_title,
         "paragraph": news_p,
         "weather": mars_weather_tweet,
         "facts": new_scraped,
-        "image": featured_image_url
+        "image": featured_image_url,
+        "hemispheres": hemisphere_image_urls
     }    
         
     browser.quit()
